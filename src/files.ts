@@ -4,12 +4,11 @@ import multimatch from 'multimatch';
 import path from 'path';
 import pMap from 'p-map';
 import recursive from 'recursive-readdir';
-import typescript from 'typescript';
 
 import {loadAPICredentials, script} from './auth.js';
 import {ClaspError} from './clasp-error.js';
 import {Conf} from './conf.js';
-import {FS_OPTIONS, PROJECT_MANIFEST_FILENAME} from './constants.js';
+import {PROJECT_MANIFEST_FILENAME} from './constants.js';
 import {DOTFILE} from './dotfile.js';
 import {ERROR, LOG} from './messages.js';
 import {
@@ -21,9 +20,6 @@ import {
   stopSpinner,
 } from './utils.js';
 
-import type {TranspileOptions} from 'typescript';
-
-const {parseConfigFileTextToJson} = typescript;
 const config = Conf.get();
 
 // An Apps Script API File
@@ -40,20 +36,10 @@ interface ProjectFile {
   readonly type: string;
 }
 
-async function transpile(source: string, transpileOptions: TranspileOptions): Promise<string> {
-  const ts2gas = await import('ts2gas');
-  return ts2gas.default(source, transpileOptions);
-}
-
-async function projectFileWithContent(file: ProjectFile, transpileOptions: TranspileOptions): Promise<ProjectFile> {
+async function projectFileWithContent(file: ProjectFile): Promise<ProjectFile> {
   const content = await fs.readFile(file.name);
-  let source = content.toString();
-  let type = getApiFileType(file.name);
-
-  if (type === 'TS') {
-    source = await transpile(source, transpileOptions);
-    type = 'SERVER_JS';
-  }
+  const source = content.toString();
+  const type = getApiFileType(file.name);
   return {...file, source, type};
 }
 
@@ -145,9 +131,7 @@ export const splitProjectFiles = (files: ProjectFile[]): [ProjectFile[], Project
 ];
 
 async function getContentOfProjectFiles(files: ProjectFile[]) {
-  const transpileOpttions = getTranspileOptions();
-
-  const getContent = (file: ProjectFile) => (file.isIgnored ? file : projectFileWithContent(file, transpileOpttions));
+  const getContent = (file: ProjectFile) => (file.isIgnored ? file : projectFileWithContent(file));
   return Promise.all(files.map(getContent));
 }
 
@@ -208,21 +192,6 @@ export const getLocalFileType = (type: string, fileExtension?: string): string =
  * @returns {boolean} If .clasp.json exists.
  */
 export const hasProject = (): boolean => config.projectConfig !== undefined && fs.existsSync(config.projectConfig);
-
-/**
- * Returns in tsconfig.json.
- * @returns {TranspileOptions} if tsconfig.json not exists, return an empty object.
- */
-const getTranspileOptions = (): TranspileOptions => {
-  const tsconfigPath = path.join(config.projectRootDirectory!, 'tsconfig.json');
-
-  return fs.existsSync(tsconfigPath)
-    ? {
-        compilerOptions: parseConfigFileTextToJson(tsconfigPath, fs.readFileSync(tsconfigPath, FS_OPTIONS)).config
-          .compilerOptions,
-      }
-    : {};
-};
 
 // /**
 //  * Recursively finds all files that are part of the current project, and those that are ignored

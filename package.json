@@ -1,6 +1,6 @@
 {
-  "name": "@google/clasp",
-  "version": "2.4.1",
+  "name": "@taraflex/clasp",
+  "version": "2.4.1001",
   "description": "Develop Apps Script Projects locally",
   "type": "module",
   "exports": "./build/src/index.js",
@@ -87,9 +87,7 @@
     "recursive-readdir": "^2.2.2",
     "server-destroy": "^1.0.1",
     "split-lines": "^3.0.0",
-    "strip-bom": "^5.0.0",
-    "ts2gas": "^4.2.0",
-    "typescript": "^4.4.2"
+    "strip-bom": "^5.0.0"
   },
   "devDependencies": {
     "@types/chai": "^4.2.21",

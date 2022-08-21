@@ -8,7 +8,6 @@ Clasp project file | `./.clasp.json` | Specifies which Apps Script project to in
 Clasp ignore file | `.claspignore` in the same directory as the Clasp project file | Specifies files are ignored by `push` and `watch` commands
 Google Auth file | `~/.clasprc.json` (global) or `.clasprc.json` in the same directory as the Clasp project file (local) | OAuth 2.0 authentication and authorization to access Google APIs. Authentication is global by default.
 Apps Script project manifest | `<rootDir>/appsscript.json` | Specifies basic project information (cf. [Manifests](https://developers.google.com/apps-script/concepts/manifests))
-Typescript configuration file | `<rootDir>/tsconfig.json` | Used for user specific compiling options (limited support.)
 
 ## Environment variables
 

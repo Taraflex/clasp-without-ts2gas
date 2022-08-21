@@ -180,7 +180,7 @@ export const getProjectSettings = async (): Promise<ProjectSettings> => {
 export const getApiFileType = (value: string): string => {
   const extension = value.slice(value.lastIndexOf('.') + 1).toUpperCase();
 
-  return ['GS', 'JS'].includes(extension) ? 'SERVER_JS' : extension;
+  return ['GS', 'JS', 'TS'].includes(extension) ? 'SERVER_JS' : extension;
 };
 
 const mapper = async (url: string) => {
